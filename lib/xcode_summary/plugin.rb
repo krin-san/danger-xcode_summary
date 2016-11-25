@@ -101,20 +101,26 @@ module Danger
 
     private
 
+    def un_html(s)
+      [["\n", ' '], ["<br \/>", "\n||"], ['  ', ' ']].
+        each { |r| s.gsub!(r[0], r[1] || '') }
+      s
+    end
+
     def format_summary(xcode_summary)
-      messages(xcode_summary).each { |s| message(s, sticky: sticky_summary) }
+      messages(xcode_summary).each { |s| message(un_html(s), sticky: sticky_summary) }
       warnings(xcode_summary).each do |result|
         if inline_mode && result.location
-          warn(result.message, sticky: false, file: result.location.file_name, line: result.location.line)
+          warn(un_html(result.message), sticky: false, file: result.location.file_name, line: result.location.line)
         else
-          warn(result.message, sticky: false)
+          warn(un_html(result.message), sticky: false)
         end
       end
       errors(xcode_summary).each do |result|
         if inline_mode && result.location
-          fail(result.message, sticky: false, file: result.location.file_name, line: result.location.line)
+          fail(un_html(result.message), sticky: false, file: result.location.file_name, line: result.location.line)
         else
-          fail(result.message, sticky: false)
+          fail(un_html(result.message), sticky: false)
         end
       end
     end
