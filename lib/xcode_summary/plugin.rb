@@ -67,10 +67,16 @@ module Danger
 
     private
 
+    def un_html(s)
+      [["\n", " "], ["<br \/>", "\n||"], ["  ", " "]].
+        each { |r| s.gsub!(r[0], r[1] || "") }
+      s
+    end
+
     def format_summary(xcode_summary)
-      messages(xcode_summary).each { |s| message(s, sticky: sticky_summary) }
-      warnings(xcode_summary).each { |s| warn(s, sticky: false) }
-      errors(xcode_summary).each { |s| fail(s, sticky: false) }
+      messages(xcode_summary).each { |s| message(un_html(s), sticky: sticky_summary) }
+      warnings(xcode_summary).each { |s| warn(un_html(s), sticky: false) }
+      errors(xcode_summary).each { |s| fail(un_html(s), sticky: false) }
     end
 
     def messages(xcode_summary)
